@@ -1,17 +1,22 @@
-Firstly, this implementation builds on the source code provided at http://www.tcpdump.org/pcap.html.
+#Passive-Network-Monitoring
 
-I use a pointer variable to point to the memory address of the incoming packet. The basis of my implementation depends on deciphering the size of each header in the packet. By default, ethernet headers are 14 bytes in size (6+6 for the MAC addresses and 2 bytes for type). Thus I know that my Network layer header begins from the 15th byte of the packet. mydump drops packets that are not IP packets (IPv4 to be precise). Next I extract the header length from the HLEN field. The transport layer header begins at the byte after this header ends. TCP packets are variable length in size but UDP and ICMP headers are fixed (8 bytes). We can similarly detect the starting byte for the packet payload. 
-Ive used data structures for each type of header mydump accepts; each has fields to extract the corresponding header information. 
-I obtained the MAC addresses and type from ethernet header, length and IP addresses from IP header and source and destination ports from transport layer header. 
-Ive used the getopt() function of C to deal with zero or more options that the
-user can provide while runnig mydump.
-The default device is found (if -i option not provided) by pcap_lookupdev()
-Packets are captured either using pcap_open_live() or using
-pcap_open_offline() (if -r option is given)
-Filters are applied using pcap_compile() and pcap_setfilter()
-Finally the capturing takes place by calling pcap_loop()
+Passive network monitoring tool using Libpcap packet capture library. 
+Captures traffic in promiscous mode or reads packets from pcap trace file. Dumps output in a fashion similar to tcpdump. 
 
-"Data Communications and Networking" by Forouzan was the main reference point for me through this assignment. 
+To run:
+
+mydump [-i interface] [-r file] [-s string] expression
+
+-i  Live capture from the network device <interface> (e.g., eth0). If not
+    specified, mydump should automatically select a default interface to
+    listen on. Capture should continue indefinitely until the user
+    terminates the program.
+
+-r  Read packets from <file> in tcpdump format.
+
+-s  Keep only packets that contain <string> in their payload (after any BPF
+    filter is applied). You are not required to implement wildcard or regular
+    expression matching. A simple string matching operation should suffice.
 
 
 Sample output:
